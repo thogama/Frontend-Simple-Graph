@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-
 const state = useState("state", () => [
     {
         label: "Price 1",
         backgroundColor: "#c3dd32",
         data: []
     },
-    
 ])
+
+const labels = useState("labels", () => {
+    const result: String[] = []
+    return result
+})
 
 const ws = new WebSocket("ws://localhost:3333")
 ws.addEventListener("open", () => {
@@ -17,8 +20,11 @@ ws.addEventListener("message", async (event) => {
     //  console.log(JSON.parse(event['data']))
     console.log(JSON.parse(event['data']))
     //  console.log(state.value[0].data = event.data)
-    state.value[0].data = JSON.parse(event['data'])
+    state.value[0].data = state.value[0].data.concat(JSON.parse(event['data']))
 
+    labels.value.push(new Date().toLocaleTimeString())
+    console.log(labels.value)
+    
 })
 useHead({
     title: "Chart js"
@@ -41,12 +47,12 @@ useHead({
             </div>
 
             <a class="btn rounded-pill  text-primary " href="https://github.com/thogama">
-                by Alan 
+                by Alan
             </a>
 
         </div>
         <div class="col-lg-9 ">
-            <LineChart ref="line" :datasets="state" :labels=([1,2,3,4,5]) />
+            <LineChart ref="line" :datasets="state" :labels="labels" />
 
         </div>
     </div>
